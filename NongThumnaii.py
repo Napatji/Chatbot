@@ -6,13 +6,6 @@ from flask import request
 from flask import make_response
 from openModel import thumnaii as th
 from datetime import datetime
-
-from random import randint
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
-cred = credentials.Certificate("ใส่ชื่อไฟล์คีย์ส่วนตัว.json")
-firebase_admin.initialize_app(cred)
 # Flask
 app = Flask(__name__)
 @app.route('/', methods=['POST']) 
@@ -32,7 +25,6 @@ def MainFunction():
     return r
 
 def generating_answer(question_from_dailogflow_dict):
-
     #Print intent ที่รับมาจาก Dailogflow
     print(json.dumps(question_from_dailogflow_dict, indent=4 ,ensure_ascii=False))
 
@@ -60,13 +52,6 @@ def conversation():
     return answer_function
 
 def predictCovid(respond_dict):
-    #----Additional from previous file----
-    database_ref = firestore.client().document('Food/Menu_List')
-    database_dict = database_ref.get().to_dict()
-    database_list = list(database_dict.values())
-    ran_menu = randint(0, len(database_list)-1)
-    menu_name = database_list[ran_menu]
-    #-------------------------------------
     #เก็บค่าวันที่
     day = int(respond_dict["queryResult"]["outputContexts"][1]["parameters"]["day.original"])
     month = int(respond_dict["queryResult"]["outputContexts"][1]["parameters"]["month.original"])
