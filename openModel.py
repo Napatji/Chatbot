@@ -4,7 +4,7 @@ import joblib
 
 def thumnaii(num,start=None,stop = None):
      model = None
-     if start < 10:
+     if start == 0 and stop == 9:
           model = joblib.load(open('10_model.sav', 'rb'))
      elif start == 10 and stop == 19:
           model = joblib.load(open('10-19_model.sav', 'rb'))
@@ -18,7 +18,7 @@ def thumnaii(num,start=None,stop = None):
           model = joblib.load(open('50-59_model.sav', 'rb'))
      elif start == 60 and stop == 69:
           model = joblib.load(open('60-69_model.sav', 'rb'))
-     elif start == 70:
+     elif start == 70 and stop == None:
           model = joblib.load(open('70_model.sav', 'rb'))
      ii = num                                                 #1-80 คือ ข้อมูลเรา เรื่มทำนาย 81 จะตรงวันวันที่ 11 เดือน11 2021
      idxlist =[]

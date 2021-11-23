@@ -6,6 +6,13 @@ from flask import request
 from flask import make_response
 from openModel import thumnaii as th
 from datetime import datetime
+
+from random import randint
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+cred = credentials.Certificate("ใส่ชื่อไฟล์คีย์ส่วนตัว.json")
+firebase_admin.initialize_app(cred)
 # Flask
 app = Flask(__name__)
 @app.route('/', methods=['POST']) 
@@ -52,7 +59,14 @@ def conversation():
     answer_function = word
     return answer_function
 
-def predictCovid(respond_dict): #ฟังก์ชั่นสำหรับคำนวนน้ำหนัก
+def predictCovid(respond_dict):
+    #----Additional from previous file----
+    database_ref = firestore.client().document('Food/Menu_List')
+    database_dict = database_ref.get().to_dict()
+    database_list = list(database_dict.values())
+    ran_menu = randint(0, len(database_list)-1)
+    menu_name = database_list[ran_menu]
+    #-------------------------------------
     #เก็บค่าวันที่
     day = int(respond_dict["queryResult"]["outputContexts"][1]["parameters"]["day.original"])
     month = int(respond_dict["queryResult"]["outputContexts"][1]["parameters"]["month.original"])
@@ -67,7 +81,14 @@ def predictCovid(respond_dict): #ฟังก์ชั่นสำหรับ�
     index = 80 + compareDate(day,month,year)
     # answer_function = f'{day}/{month}/{year} = {index}'
     #แสดงการคำตอบ
-    answer_function = f'จะมีผู้ติดเชื้อโควิดโดยประมาณ {int(th(index,start_age,stop_age))} คนงับ'
+    if start_age == 70:
+        check_covid = int(th(index,start_age))
+    else:
+        check_covid = int(th(index,start_age,stop_age))
+    if check_covid > 0:
+        answer_function = f'จะมีผู้ติดเชื้อโควิดโดยประมาณ {check_covid}  คนค่ะ'
+    else:
+        answer_function = f'น้องทำนายว่าน่าจะไม่มีผู้ติดเชื้อแล้วค่าาา'
     return answer_function
 
 def compareDate(day,month,year):
